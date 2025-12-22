@@ -2,6 +2,12 @@
 
 Python code để load và xử lý dữ liệu Mallorn astronomical classification challenge.
 
+Video Thuyet trinh : https://drive.google.com/drive/folders/1lAA7bJfv8GkUWK_GBqrUeNkSFKSaMhSa?usp=drive_link
+
+Bằng chứng nộp bài lên Kaggle, bao gồm ảnh chụp màn hình và liên kết đến bài dự thi Kaggle của nhóm: https://www.kaggle.com/competitions/mallorn-astronomical-classification-challenge/submissions#
+
+![alt text](image.png)
+
 ## Cấu trúc dữ liệu
 
 Dataset bao gồm:
