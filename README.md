@@ -115,7 +115,7 @@ Ví dụ:
 4.4 Kết quả feature set
   Xuất ra:
   train_features_ml.csv
-  ![alt text](image-2.png)
+![alt text](image-1.png)
   test_features_ml.csv
 
 Pipeline học máy
@@ -123,16 +123,17 @@ Pipeline học máy
   - Xử lý missing values : xu ly NAN
   - Scale features (StandardScaler) : min max scaler
   - Chia tập dữ liệu
-  - Feature Selection : RFE
   Mô hình sử dụng : 
       Logistic Regression 
-      LightGBM (base)
+      LightGBM 
+      catboost
+      ....
   Lý do chọn:
       Phù hợp với dữ liệu tabular
       Huấn luyện nhanh
       Hoạt động tốt với feature engineered data
 Ket qua cua mo hinh : 
-![alt text](image-1.png)
+![alt text](image-2.png)
 
 ## License
 
