@@ -1,15 +1,38 @@
 # Mallorn Astronomical Classification Challenge - Data Loader
 
-Python code để load và xử lý dữ liệu Mallorn astronomical classification challenge.
+Python code xử lý dữ liệu Mallorn astronomical classification challenge.
 
 Video Thuyet trinh : https://drive.google.com/drive/folders/1lAA7bJfv8GkUWK_GBqrUeNkSFKSaMhSa?usp=drive_link
 
 Bằng chứng nộp bài lên Kaggle, bao gồm ảnh chụp màn hình và liên kết đến bài dự thi Kaggle của nhóm: https://www.kaggle.com/competitions/mallorn-astronomical-classification-challenge/submissions#
 
 ![alt text](image.png)
+Giới thiệu
 
-## Cấu trúc dữ liệu
+Đây là dự án môn học thực hiện trên bộ dữ liệu của Mallorn Astronomical Classification Challenge (Kaggle).
+Mục tiêu của dự án là xây dựng pipeline học máy hoàn chỉnh để phân loại các đối tượng thiên văn thành Transient và Non-transient dựa trên dữ liệu lightcurve không đều theo thời gian.
 
+Dự án bao gồm:
+  Xây dựng Data Loader
+  Feature Engineering từ time-series
+  Huấn luyện và đánh giá mô hình
+  Nộp bài và đánh giá trên Kaggle
+
+
+Mục tiêu bài toán
+Bài toán: Binary Classification
+
+Target variable:
+    0: Non-transient objects
+    1: Transient objects
+
+Thách thức chính:
+
+  Lightcurve là time-series không đều
+  Mỗi object có số lượng quan sát và filter khác nhau
+  Không thể đưa trực tiếp vào mô hình ML truyền thống
+
+  ## Cấu trúc dữ liệu
 Dataset bao gồm:
 
 - **train_log.csv**: Metadata và labels cho training data (3,044 objects)
@@ -49,140 +72,63 @@ pip install -r requirements.txt
 ```
 
 ## Sử dụng
+Feature Engineering
+Với mỗi filter (u, g, r, i, z, y), trích xuất:
 
-### 1. Load metadata
+(a) Thống kê cơ bản
+  n_obs
+  time_span
+  flux_mean, flux_std
+  flux_min, flux_max, flux_median
+  amplitude
+(b) Phân phối
+  flux_skew
+  flux_kurtosis
+(c) Động học lightcurve
+  t_peak
+  rise_time
+  decay_time
+  max_slope_up
+  max_slope_down
+(d) Diện tích
+  auc (trapezoidal integration)
 
-```python
-from load_mallorn_data import MallornDataLoader
-
-# Khởi tạo loader
-loader = MallornDataLoader("./")
-
-# Load training metadata
-train_meta = loader.load_train_metadata()
-print(train_meta.head())
-
-# Load test metadata
-test_meta = loader.load_test_metadata()
-print(test_meta.head())
-```
-
-### 2. Load lightcurve data
-
-```python
-# Load lightcurves từ một split cụ thể
-split1_train = loader.load_split_lightcurves(split_num=1, mode='train')
-
-# Load lightcurves từ tất cả splits
-all_train_lc = loader.load_all_lightcurves(mode='train')
-
-# Load lightcurve của một object cụ thể
-object_id = "Dornhoth_fervain_onodrim"
-lc = loader.load_object_lightcurve(object_id, mode='train')
-```
-
-### 3. Trích xuất features
-
-```python
-# Trích xuất statistical features từ lightcurve
-features = loader.create_features_from_lightcurve(lc)
-print(features)
-```
-
-### 4. Dataset summary
-
-```python
-# Xem tổng quan về dataset
-summary = loader.get_dataset_summary()
-print(summary)
-```
-
-## Chạy ví dụ
-
-```bash
-# Demo đầy đủ các chức năng
-python load_mallorn_data.py
-
-# Ví dụ đơn giản với visualization
-python example_usage.py
-```
-
-## Class MallornDataLoader
-
-### Methods
-
-- `load_train_metadata()`: Load training metadata
-- `load_test_metadata()`: Load test metadata
-- `load_sample_submission()`: Load sample submission file
-- `load_split_lightcurves(split_num, mode)`: Load lightcurves từ một split
-- `load_all_lightcurves(mode)`: Load lightcurves từ tất cả splits
-- `load_object_lightcurve(object_id, mode)`: Load lightcurve của một object
-- `get_dataset_summary()`: Lấy thông tin tổng quan về dataset
-- `create_features_from_lightcurve(lightcurve)`: Trích xuất features từ lightcurve
-
-## Target Variable
-
-**Binary classification task:**
-- `target = 0`: Non-transient objects
-- `target = 1`: Transient objects
-
-Distribution trong training data sẽ được hiển thị khi load metadata.
-
-## Filters
-
-Dataset sử dụng 6 photometric filters:
-- **u**: Ultraviolet
-- **g**: Green
-- **r**: Red
-- **i**: Near-infrared
-- **z**: Infrared
-- **y**: Far-infrared
-
-## Notes
-
-- Mỗi object có thể có số lượng observations khác nhau
-- Không phải tất cả objects đều có observations ở tất cả filters
-- Time series data không đều đặn (irregular sampling)
-- Một số giá trị flux có thể âm (do noise)
-
-## Ví dụ workflow
-
-```python
-from load_mallorn_data import MallornDataLoader
-import pandas as pd
-
-# 1. Initialize
-loader = MallornDataLoader("./")
-
-# 2. Load metadata
-train_meta = loader.load_train_metadata()
-test_meta = loader.load_test_metadata()
-
-# 3. Build feature matrix từ lightcurves
-features_list = []
-for obj_id in train_meta['object_id']:
-    try:
-        lc = loader.load_object_lightcurve(obj_id, mode='train')
-        features = loader.create_features_from_lightcurve(lc)
-        features['object_id'] = obj_id
-        features_list.append(features)
-    except Exception as e:
-        print(f"Error processing {obj_id}: {e}")
-
-# 4. Create feature DataFrame
-features_df = pd.DataFrame(features_list)
-
-# 5. Merge với metadata
-train_data = train_meta.merge(features_df, on='object_id')
-
-# 6. Train model
-# X = train_data.drop(['object_id', 'target', ...], axis=1)
-# y = train_data['target']
-# model.fit(X, y)
-
-# 7. Make predictions on test data
-# ...
-```
+4.2 Feature giữa các filter (Cross-filter)
+(a) Color indices
+Ví dụ:
+  color_mean_u_g
+  color_mean_g_r
+  color_mean_r_i
+  → Phản ánh màu sắc / phổ năng lượng
+(b) Chênh lệch thời điểm peak
+  t_peak_diff_u_g
+  t_peak_diff_r_i
+  → Phản ánh tiến hóa theo bước sóng
+4.3 Metadata features
+  Kết hợp thêm:
+  Z
+  Z_err
+  EBV
+4.4 Kết quả feature set
+  Xuất ra:
+  train_features_ml.csv
+  ![alt text](image-2.png)
+  test_features_ml.csv
+Pipeline học máy
+  - Load feature CSV
+  - Xử lý missing values : xu ly NAN
+  - Scale features (StandardScaler) : min max scaler
+  - Chia tập dữ liệu
+  - Feature Selection : RFE
+  Mô hình sử dụng : 
+      Logistic Regression 
+      LightGBM (base)
+  Lý do chọn:
+      Phù hợp với dữ liệu tabular
+      Huấn luyện nhanh
+      Hoạt động tốt với feature engineered data
+Ket qua cua mo hinh : 
+![alt text](image-1.png)
 
 ## License
 
