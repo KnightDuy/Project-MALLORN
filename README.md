@@ -7,6 +7,9 @@ Video Thuyet trinh : https://drive.google.com/drive/folders/1lAA7bJfv8GkUWK_GBqr
 Bằng chứng nộp bài lên Kaggle, bao gồm ảnh chụp màn hình và liên kết đến bài dự thi Kaggle của nhóm: https://www.kaggle.com/competitions/mallorn-astronomical-classification-challenge/submissions#
 
 ![alt text](image.png)
+
+Báo cáo: https://docs.google.com/document/d/1vr10rQCeDxsT7jm5tLbNBGEkFPHmPjwd/edit?usp=sharing&ouid=108579479565852243878&rtpof=true&sd=true
+
 Giới thiệu
 
 Đây là dự án môn học thực hiện trên bộ dữ liệu của Mallorn Astronomical Classification Challenge (Kaggle).
@@ -114,6 +117,7 @@ Ví dụ:
   train_features_ml.csv
   ![alt text](image-2.png)
   test_features_ml.csv
+
 Pipeline học máy
   - Load feature CSV
   - Xử lý missing values : xu ly NAN
