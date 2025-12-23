@@ -10,6 +10,8 @@ Bằng chứng nộp bài lên Kaggle, bao gồm ảnh chụp màn hình và li�
 
 Báo cáo: https://docs.google.com/document/d/1vr10rQCeDxsT7jm5tLbNBGEkFPHmPjwd/edit?usp=sharing&ouid=108579479565852243878&rtpof=true&sd=true
 
+Slide :https://docs.google.com/presentation/d/1QvC-zQYGugSa6OE5R501Lzyll0DJZMMEeRkJKcK-XiM/edit?usp=sharing
+
 Giới thiệu
 
 Đây là dự án môn học thực hiện trên bộ dữ liệu của Mallorn Astronomical Classification Challenge (Kaggle).
